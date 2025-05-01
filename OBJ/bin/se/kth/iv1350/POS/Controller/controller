@@ -1,0 +1,58 @@
+package se.kth.iv1350.POS.Controller;
+
+import se.kth.iv1350.POS.Integration.InventorySystem;
+import se.kth.iv1350.POS.Integration.ItemInformation;
+import se.kth.iv1350.POS.Integration.Printer;
+import se.kth.iv1350.POS.model.*;
+
+public class Controller {
+    private final InventorySystem inventorySystem;
+    private final Printer printer;
+    private final CashRegister cashRegister;
+    private Sale currentSale;
+ 
+    public Controller(InventorySystem var1, Printer var2) {
+       this.inventorySystem = var1;
+       this.printer = var2;
+       this.cashRegister = new CashRegister();
+    }
+ 
+    public void startSale() {
+       this.currentSale = new Sale();
+       System.out.println("A new sale has started.\n");
+    }
+ 
+    public void registerItem(String var1) {
+       ItemInformation var2 = this.inventorySystem.findItem(var1);
+       if (var2 == null) {
+          System.out.println("No item found with ID: " + var1);
+       } else {
+          this.currentSale.registerItem(var2);
+          this.printLastItemInfo();
+          this.printRunningTotal();
+       }
+    }
+ 
+    private void printLastItemInfo() {
+       List var1 = this.currentSale.getItems();
+       SaleItem var2 = (SaleItem)var1.get(var1.size() - 1);
+       System.out.printf("Item ID: %s\nItem name: %s\nItem cost: %.2f SEK\nVAT: %.0f%%\nItem description: %s\n\n", var2.getItemId(), var2.getName(), var2.getUnitPrice(), var2.getUnitPrice() == 0.0 ? 0.0 : var2.getTotalVAT() / (var2.getUnitPrice() * (double)var2.getQuantity()) * 100.0, var2.getDescription());
+    }
+ 
+    private void printRunningTotal() {
+       System.out.printf("Total cost (incl VAT): %.2f SEK\n", this.currentSale.getRunningTotal());
+       System.out.printf("Total VAT: %.2f SEK\n\n", this.currentSale.getTotalVAT());
+    }
+ 
+    public void endSale() {
+       System.out.printf("End sale:\nTotal cost (incl VAT): %.2f SEK\n\n", this.currentSale.getRunningTotal());
+    }
+ 
+    public void pay(double var1) {
+       this.cashRegister.addPayment(var1);
+       Receipt var3 = new Receipt(this.currentSale, var1);
+       this.printer.printReceipt(var3.generateReceiptText());
+       System.out.printf("Change to give the customer: %.2f SEK\n", var3.getChange());
+    }
+ }
+ 

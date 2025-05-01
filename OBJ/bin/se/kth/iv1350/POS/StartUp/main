@@ -1,0 +1,19 @@
+package se.kth.iv1350.POS.StartUp;
+
+import se.kth.iv1350.POS.Controller.Controller;
+import se.kth.iv1350.POS.Integration.InventorySystem;
+import se.kth.iv1350.POS.Integration.Printer;
+import se.kth.iv1350.POS.View.View;
+
+public class Main {
+   public Main() {
+   }
+
+   public static void main(String[] var0) {
+      InventorySystem var1 = new InventorySystem();
+      Printer var2 = new Printer();
+      Controller var3 = new Controller(var1, var2);
+      View var4 = new View(var3);
+      var4.sampleExecution();
+   }
+}
