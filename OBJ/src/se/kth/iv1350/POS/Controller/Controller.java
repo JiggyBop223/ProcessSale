@@ -32,7 +32,6 @@ public class Controller {
      */
     public void startSale() {
         this.currentSale = new Sale();
-        System.out.println("A new sale has started.\n");
     }
 
     /**
@@ -55,6 +54,7 @@ public class Controller {
         List<Item> items = this.currentSale.getItems();
         Item item = items.get(items.size() - 1);
         ItemInformation itemInfo = item.getItemInfo();
+        System.out.printf("Add 1 item with item id %s :\n", itemInfo.getItemId());
         System.out.printf("Item ID: %s\nItem name: %s\nItem cost: %.2f SEK\nVAT: %.0f%%\nItem description: %s\n\n",
             itemInfo.getItemId(),
             itemInfo.getName(),

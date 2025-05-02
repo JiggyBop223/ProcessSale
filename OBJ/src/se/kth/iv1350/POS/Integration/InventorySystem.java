@@ -14,8 +14,8 @@ public class InventorySystem {
      */
     public InventorySystem() {
         this.inventory = new HashMap<>();
-        inventory.put("abc123", new ItemInformation("abc123", "Milk", "Fresh milk 1L", 10.90, 0.12));
-        inventory.put("def456", new ItemInformation("def456", "Bread", "Wheat bread 500g", 25.90, 0.12));
+        inventory.put("abc123", new ItemInformation("abc123", "BigWheel Oatmeal", "BigWheel Oatmeal 500ml, whole grain oats, high fiber, gluten free", 29.90, 0.06));
+        inventory.put("def456", new ItemInformation("def456", "YouGoGo Blueberry", " YouGoGo Blueberry 240g, low sugar yoghurt, blueberry flavour", 14.90, 0.06));
     }
 
     /**

@@ -28,8 +28,8 @@ public class Receipt {
      */
     public String generateReceiptText() {
         StringBuilder receipt = new StringBuilder();
-        receipt.append("=== BEGIN RECEIPT ===\n");
-        receipt.append("Date: ").append(saleTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\n\n");
+        receipt.append("------ BEGIN RECEIPT ------\n");
+        receipt.append("Time Of Sale: ").append(saleTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\n\n");
         
         for (Item item : sale.getItems()) {
             receipt.append(String.format("%s %d x %.2f %.2f SEK\n",
@@ -43,7 +43,7 @@ public class Receipt {
         receipt.append(String.format("VAT: %.2f SEK\n", sale.getTotalVAT()));
         receipt.append(String.format("Cash: %.2f SEK\n", amountPaid));
         receipt.append(String.format("Change: %.2f SEK\n", getChange()));
-        receipt.append("=== End of Receipt ===\n");
+        receipt.append("------ End of Receipt ------\n");
         return receipt.toString();
     }
 

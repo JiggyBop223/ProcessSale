@@ -10,6 +10,7 @@ public class CashRegister {
      * Creates a new cash register.
      */
     public CashRegister() {
+
         this.balance = 0;
     }
 
@@ -19,6 +20,7 @@ public class CashRegister {
      * @param amount The amount to add.
      */
     public void addPayment(double amount) {
+
         this.balance += amount;
     }
 

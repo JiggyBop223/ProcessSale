@@ -12,7 +12,7 @@ public class Sale {
     /**
      * List of items in the current sale.
      */
-    private List<Item> items;
+    private final List<Item> items;
 
     /**
      * The running total of the sale including VAT.
@@ -70,6 +70,7 @@ public class Sale {
      * @return The items in the sale.
      */
     public List<Item> getItems() {
+
         return new ArrayList<>(items);
     }
 
@@ -79,6 +80,7 @@ public class Sale {
      * @return The running total.
      */
     public double getRunningTotal() {
+
         return runningTotal;
     }
 
@@ -88,6 +90,7 @@ public class Sale {
      * @return The total VAT.
      */
     public double getTotalVAT() {
+
         return totalVAT;
     }
 }

@@ -1,6 +1,7 @@
 package se.kth.iv1350.POS.Model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import se.kth.iv1350.POS.Integration.ItemInformation;
 
 /**
@@ -79,7 +80,9 @@ public class Item {
      * @return The total VAT of the item.
      */
     public BigDecimal getTotalVAT() {
-        return getTotalPrice().multiply(BigDecimal.valueOf(itemInfo.getVatRate()));
+        BigDecimal vatRate = BigDecimal.valueOf(itemInfo.getVatRate());
+        BigDecimal divisor = BigDecimal.ONE.add(vatRate);
+        return getTotalPrice().multiply(vatRate).divide(divisor, 2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -88,6 +91,6 @@ public class Item {
      * @return The total price including VAT.
      */
     public BigDecimal getTotalPriceWithVAT() {
-        return getTotalPrice().add(getTotalVAT());
+        return getTotalPrice();
     }
 }
