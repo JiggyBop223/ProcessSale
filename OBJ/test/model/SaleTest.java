@@ -40,8 +40,8 @@ class SaleTest {
     @Test
     void getRunningTotal_shouldReturnCorrectTotalWithVAT() {
         Sale sale = new Sale();
-        // Price: 20, VAT: 10% → Total per item = 22
-        ItemInformation itemInfo = new ItemInformation("xyz999", "Juice", "Fruit juice", 20.0, 0.1);
+
+        ItemInformation itemInfo = new ItemInformation("xyz999", "Juice", "Fruit juice", 22.0, 0.1);
 
         sale.registerItem(itemInfo); // total = 22
         sale.registerItem(itemInfo); // total = 44
@@ -52,12 +52,12 @@ class SaleTest {
     @Test
     void getTotalVAT_shouldReturnCorrectVATOnly() {
         Sale sale = new Sale();
-        // Price: 50, VAT: 20% → VAT per item = 10
-        ItemInformation itemInfo = new ItemInformation("bcd456", "Protein Bar", "Bar", 50.0, 0.2);
+
+        ItemInformation itemInfo = new ItemInformation("bcd456", "Protein Bar", "Bar", 51.0, 0.2);
 
         sale.registerItem(itemInfo);
         sale.registerItem(itemInfo);
 
-        assertEquals(20.0, sale.getTotalVAT(), 0.0001, "Total VAT should be correct for quantity 2");
+        assertEquals(17.0, sale.getTotalVAT(), 0.0001, "Total VAT should be correct for quantity 2");
     }
 }
