@@ -38,52 +38,63 @@ public class Controller {
      * Registers an item to the sale.
      *
      * @param itemId The ID of the item to register.
+     * @return The registered item information, or null if item not found.
      */
-    public void registerItem(String itemId) {
+    public ItemInformation registerItem(String itemId) {
         ItemInformation itemInfo = this.inventorySystem.findItem(itemId);
-        if (itemInfo == null) {
-            System.out.println("No item found with ID: " + itemId);
-        } else {
+        if (itemInfo != null) {
             this.currentSale.registerItem(itemInfo);
-            this.printLastItemInfo();
-            this.printRunningTotal();
         }
+        return itemInfo;
     }
 
-    private void printLastItemInfo() {
+    /**
+     * Gets the last registered item's information.
+     *
+     * @return The last registered item, or null if no items have been registered.
+     */
+    public Item getLastRegisteredItem() {
         List<Item> items = this.currentSale.getItems();
-        Item item = items.get(items.size() - 1);
-        ItemInformation itemInfo = item.getItemInfo();
-        System.out.printf("Add 1 item with item id %s :\n", itemInfo.getItemId());
-        System.out.printf("Item ID: %s\nItem name: %s\nItem cost: %.2f SEK\nVAT: %.0f%%\nItem description: %s\n\n",
-            itemInfo.getItemId(),
-            itemInfo.getName(),
-            itemInfo.getPrice(),
-            itemInfo.getVatRate() * 100.0,
-            itemInfo.getDescription());
+        return items.isEmpty() ? null : items.get(items.size() - 1);
     }
 
-    private void printRunningTotal() {
-        System.out.printf("Total cost (incl VAT): %.2f SEK\n", this.currentSale.getRunningTotal());
-        System.out.printf("Total VAT: %.2f SEK\n\n", this.currentSale.getTotalVAT());
+    /**
+     * Gets the current running total of the sale.
+     *
+     * @return The running total.
+     */
+    public double getRunningTotal() {
+        return this.currentSale.getRunningTotal();
+    }
+
+    /**
+     * Gets the total VAT of the current sale.
+     *
+     * @return The total VAT.
+     */
+    public double getTotalVAT() {
+        return this.currentSale.getTotalVAT();
     }
 
     /**
      * Ends the current sale.
+     *
+     * @return The final total of the sale.
      */
-    public void endSale() {
-        System.out.printf("End sale:\nTotal cost (incl VAT): %.2f SEK\n\n", this.currentSale.getRunningTotal());
+    public double endSale() {
+        return this.currentSale.getRunningTotal();
     }
 
     /**
      * Handles payment for the sale.
      *
      * @param amount The amount paid.
+     * @return The change to be given to the customer.
      */
-    public void pay(double amount) {
+    public double pay(double amount) {
         this.cashRegister.addPayment(amount);
         Receipt receipt = new Receipt(this.currentSale, amount);
         this.printer.printReceipt(receipt.generateReceiptText());
-        System.out.printf("Change to give the customer: %.2f SEK\n", receipt.getChange());
+        return receipt.getChange();
     }
 } 

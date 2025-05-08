@@ -10,12 +10,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ControllerTest {
     private Controller controller;
+    private MockPrinter mockPrinter;
+
+    private static class MockPrinter extends Printer {
+        private String lastPrintedText;
+
+        @Override
+        public void printReceipt(String receiptText) {
+            lastPrintedText = receiptText;
+        }
+
+        public String getLastPrintedText() {
+            return lastPrintedText;
+        }
+    }
 
     @BeforeEach
     void setUp() {
         InventorySystem inventorySystem = new InventorySystem();
-        Printer printer = new Printer(); // Just prints to console
-        controller = new Controller(inventorySystem, printer);
+        mockPrinter = new MockPrinter();
+        controller = new Controller(inventorySystem, mockPrinter);
     }
 
     @Test
@@ -32,27 +46,28 @@ class ControllerTest {
     }
 
     @Test
-    void registerItem_invalidId_printsMessage() {
+    void registerItem_invalidId_returnsNull() {
         controller.startSale();
-        assertDoesNotThrow(() -> controller.registerItem("invalidID"),
-                "Registering an invalid item should not crash the system");
-        // This will print a message to the console, which is expected
+        assertNull(controller.registerItem("invalidID"),
+                "Registering an invalid item should return null");
     }
 
     @Test
-    void endSale_printsTotal() {
+    void endSale_returnsTotal() {
         controller.startSale();
         controller.registerItem("abc123");
-        assertDoesNotThrow(() -> controller.endSale(),
-                "Ending sale should not throw an exception");
+        double total = controller.endSale();
+        assertEquals(29.90, total, 0.001, "End sale should return correct total");
     }
 
     @Test
     void pay_updatesCashRegisterAndPrintsReceipt() {
         controller.startSale();
         controller.registerItem("abc123");
-        assertDoesNotThrow(() -> controller.pay(100),
-                "Payment should not throw an exception");
-        // Output (receipt & change) is printed to console
+        double change = controller.pay(100);
+        
+        assertEquals(70.10, change, 0.001, "Change should be correct");
+        assertNotNull(mockPrinter.getLastPrintedText(), "Receipt should be printed");
+        assertTrue(mockPrinter.getLastPrintedText().contains("BigWheel Oatmeal"), "Receipt should contain item name");
     }
 }
