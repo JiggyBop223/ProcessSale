@@ -1,0 +1,20 @@
+Time: 2025-05-18 16:41:24
+Exception: Item with ID invalid123 could not be found in the inventory system.
+Stack trace:
+se.kth.iv1350.POS.Integration.ItemNotFoundException: Item with ID invalid123 could not be found in the inventory system.
+	at se.kth.iv1350.POS.Integration.InventorySystem.findItem(InventorySystem.java:47)
+	at se.kth.iv1350.POS.Controller.Controller.registerItem(Controller.java:69)
+	at se.kth.iv1350.POS.View.View.registerAndDisplayItem(View.java:59)
+	at se.kth.iv1350.POS.View.View.sampleExecution(View.java:46)
+	at se.kth.iv1350.POS.StartUp.Main.main(Main.java:14)
+
+Time: 2025-05-18 16:41:24
+Exception: Database failure occurred while searching for item with ID 999999
+Stack trace:
+se.kth.iv1350.POS.Integration.DatabaseFailureException: Database failure occurred while searching for item with ID 999999
+	at se.kth.iv1350.POS.Integration.InventorySystem.findItem(InventorySystem.java:42)
+	at se.kth.iv1350.POS.Controller.Controller.registerItem(Controller.java:69)
+	at se.kth.iv1350.POS.View.View.registerAndDisplayItem(View.java:59)
+	at se.kth.iv1350.POS.View.View.sampleExecution(View.java:49)
+	at se.kth.iv1350.POS.StartUp.Main.main(Main.java:14)
+
