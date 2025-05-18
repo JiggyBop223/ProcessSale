@@ -1,7 +1,7 @@
 package se.kth.iv1350.POS.View;
 
 import se.kth.iv1350.POS.Controller.Controller;
-import se.kth.iv1350.POS.Integration.ItemInformation;
+import se.kth.iv1350.POS.Integration.*;
 import se.kth.iv1350.POS.Model.Item;
 
 /**
@@ -9,6 +9,9 @@ import se.kth.iv1350.POS.Model.Item;
  */
 public class View {
     private final Controller controller;
+    private final Logger logger;
+    private final TotalRevenueView revenueView;
+    private final TotalRevenueFileOutput revenueFileOutput;
 
     /**
      * Creates a new instance of View.
@@ -17,6 +20,11 @@ public class View {
      */
     public View(Controller controller) {
         this.controller = controller;
+        this.logger = new Logger();
+        this.revenueView = new TotalRevenueView();
+        this.revenueFileOutput = new TotalRevenueFileOutput();
+        controller.addRevenueObserver(revenueView);
+        controller.addRevenueObserver(revenueFileOutput);
     }
 
     /**
@@ -34,6 +42,12 @@ public class View {
         // Add a different item
         registerAndDisplayItem("def456");
 
+        // Try to add a non-existent item
+        registerAndDisplayItem("invalid123");
+
+        // Try to add an item that causes database failure
+        registerAndDisplayItem("999999");
+
         displayEndSale();
 
         // Pay with 100 SEK
@@ -41,16 +55,16 @@ public class View {
     }
 
     private void registerAndDisplayItem(String itemId) {
-        ItemInformation itemInfo = controller.registerItem(itemId);
-        if (itemInfo == null) {
-            System.out.println("No item found with ID: " + itemId);
-            return;
-        }
-
-        Item lastItem = controller.getLastRegisteredItem();
-        if (lastItem != null) {
-            displayItemInfo(lastItem);
-            displayRunningTotal();
+        try {
+            ItemInformation itemInfo = controller.registerItem(itemId);
+            Item lastItem = controller.getLastRegisteredItem();
+            if (lastItem != null) {
+                displayItemInfo(lastItem);
+                displayRunningTotal();
+            }
+        } catch (ItemNotFoundException | DatabaseFailureException e) {
+            System.out.println("Error: " + e.getMessage());
+            logger.logException(e);
         }
     }
 

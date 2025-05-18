@@ -7,7 +7,7 @@ import se.kth.iv1350.POS.View.View;
 
 public class Main {
     public static void main(String[] args) {
-        InventorySystem inventorySystem = new InventorySystem();
+        InventorySystem inventorySystem = InventorySystem.getInstance();
         Printer printer = new Printer();
         Controller controller = new Controller(inventorySystem, printer);
         View view = new View(controller);

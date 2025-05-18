@@ -7,7 +7,7 @@ import se.kth.iv1350.POS.Integration.ItemInformation;
 /**
  * Represents an item in the sale.
  */
-public class Item {
+public class Item extends SaleItem {
     /**
      * The information about the item from the inventory system.
      */
@@ -49,8 +49,19 @@ public class Item {
      *
      * @return The quantity of the item.
      */
+    @Override
     public int getQuantity() {
         return quantity;
+    }
+
+    /**
+     * Gets the name of the item.
+     *
+     * @return The name of the item.
+     */
+    @Override
+    public String getName() {
+        return itemInfo.getName();
     }
 
     /**
@@ -70,6 +81,7 @@ public class Item {
      *
      * @return The total price of the item.
      */
+    @Override
     public BigDecimal getTotalPrice() {
         return BigDecimal.valueOf(itemInfo.getPrice()).multiply(BigDecimal.valueOf(quantity));
     }
@@ -79,6 +91,7 @@ public class Item {
      *
      * @return The total VAT of the item.
      */
+    @Override
     public BigDecimal getTotalVAT() {
         BigDecimal vatRate = BigDecimal.valueOf(itemInfo.getVatRate());
         BigDecimal divisor = BigDecimal.ONE.add(vatRate);
@@ -90,6 +103,7 @@ public class Item {
      *
      * @return The total price including VAT.
      */
+    @Override
     public BigDecimal getTotalPriceWithVAT() {
         return getTotalPrice();
     }

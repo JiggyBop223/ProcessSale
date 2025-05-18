@@ -3,7 +3,11 @@ package se.kth.iv1350.POS.Controller;
 import se.kth.iv1350.POS.Integration.InventorySystem;
 import se.kth.iv1350.POS.Integration.ItemInformation;
 import se.kth.iv1350.POS.Integration.Printer;
+import se.kth.iv1350.POS.Integration.ItemNotFoundException;
+import se.kth.iv1350.POS.Integration.DatabaseFailureException;
+import se.kth.iv1350.POS.Integration.TotalRevenueObserver;
 import se.kth.iv1350.POS.Model.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,6 +18,8 @@ public class Controller {
     private final Printer printer;
     private final CashRegister cashRegister;
     private Sale currentSale;
+    private double totalRevenue;
+    private final List<TotalRevenueObserver> revenueObservers;
 
     /**
      * Creates a new controller.
@@ -25,6 +31,23 @@ public class Controller {
         this.inventorySystem = inventorySystem;
         this.printer = printer;
         this.cashRegister = new CashRegister();
+        this.totalRevenue = 0;
+        this.revenueObservers = new ArrayList<>();
+    }
+
+    /**
+     * Adds an observer that will be notified when the total revenue changes.
+     *
+     * @param observer The observer to add.
+     */
+    public void addRevenueObserver(TotalRevenueObserver observer) {
+        revenueObservers.add(observer);
+    }
+
+    private void notifyObservers() {
+        for (TotalRevenueObserver observer : revenueObservers) {
+            observer.updateTotalRevenue(totalRevenue);
+        }
     }
 
     /**
@@ -38,13 +61,13 @@ public class Controller {
      * Registers an item to the sale.
      *
      * @param itemId The ID of the item to register.
-     * @return The registered item information, or null if item not found.
+     * @return The registered item information.
+     * @throws ItemNotFoundException if the item is not found in the inventory.
+     * @throws DatabaseFailureException if the database cannot be accessed.
      */
-    public ItemInformation registerItem(String itemId) {
+    public ItemInformation registerItem(String itemId) throws ItemNotFoundException, DatabaseFailureException {
         ItemInformation itemInfo = this.inventorySystem.findItem(itemId);
-        if (itemInfo != null) {
             this.currentSale.registerItem(itemInfo);
-        }
         return itemInfo;
     }
 
@@ -95,6 +118,11 @@ public class Controller {
         this.cashRegister.addPayment(amount);
         Receipt receipt = new Receipt(this.currentSale, amount);
         this.printer.printReceipt(receipt.generateReceiptText());
+        
+        // Update total revenue and notify observers
+        this.totalRevenue += this.currentSale.getRunningTotal();
+        notifyObservers();
+        
         return receipt.getChange();
     }
 } 

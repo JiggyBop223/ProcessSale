@@ -3,8 +3,7 @@ package Controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import se.kth.iv1350.POS.Controller.Controller;
-import se.kth.iv1350.POS.Integration.InventorySystem;
-import se.kth.iv1350.POS.Integration.Printer;
+import se.kth.iv1350.POS.Integration.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +26,7 @@ class ControllerTest {
 
     @BeforeEach
     void setUp() {
-        InventorySystem inventorySystem = new InventorySystem();
+        InventorySystem inventorySystem = InventorySystem.getInstance();
         mockPrinter = new MockPrinter();
         controller = new Controller(inventorySystem, mockPrinter);
     }
@@ -39,21 +38,28 @@ class ControllerTest {
     }
 
     @Test
-    void registerItem_validId_addsItem() {
+    void registerItem_validId_addsItem() throws ItemNotFoundException, DatabaseFailureException {
         controller.startSale();
         assertDoesNotThrow(() -> controller.registerItem("abc123"),
                 "Registering a valid item should not throw an exception");
     }
 
     @Test
-    void registerItem_invalidId_returnsNull() {
+    void registerItem_invalidId_throwsItemNotFoundException() {
         controller.startSale();
-        assertNull(controller.registerItem("invalidID"),
-                "Registering an invalid item should return null");
+        assertThrows(ItemNotFoundException.class, () -> controller.registerItem("invalidID"),
+                "Registering an invalid item should throw ItemNotFoundException");
     }
 
     @Test
-    void endSale_returnsTotal() {
+    void registerItem_databaseFailure_throwsDatabaseFailureException() {
+        controller.startSale();
+        assertThrows(DatabaseFailureException.class, () -> controller.registerItem("999999"),
+                "Registering an item with database failure ID should throw DatabaseFailureException");
+    }
+
+    @Test
+    void endSale_returnsTotal() throws ItemNotFoundException, DatabaseFailureException {
         controller.startSale();
         controller.registerItem("abc123");
         double total = controller.endSale();
@@ -61,7 +67,7 @@ class ControllerTest {
     }
 
     @Test
-    void pay_updatesCashRegisterAndPrintsReceipt() {
+    void pay_updatesCashRegisterAndPrintsReceipt() throws ItemNotFoundException, DatabaseFailureException {
         controller.startSale();
         controller.registerItem("abc123");
         double change = controller.pay(100);
