@@ -26,6 +26,7 @@ public class InventorySystem {
      * @return The singleton instance.
      */
     public static InventorySystem getInstance() {
+
         return instance;
     }
 

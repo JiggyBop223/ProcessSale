@@ -31,12 +31,30 @@ public class Receipt {
         receipt.append("------ BEGIN RECEIPT ------\n");
         receipt.append("Time Of Sale: ").append(saleTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\n\n");
         
-        for (Item item : sale.getItems()) {
-            receipt.append(String.format("%s %d x %.2f %.2f SEK\n",
-                item.getItemInfo().getName(),
-                item.getQuantity(),
-                item.getItemInfo().getPrice(),
-                item.getTotalPriceWithVAT().doubleValue()));
+        for (SaleItem item : sale.getItems()) {
+            if (item instanceof Item) {
+                Item individualItem = (Item)item;
+                receipt.append(String.format("%s %d x %.2f %.2f SEK\n",
+                    individualItem.getItemInfo().getName(),
+                    individualItem.getQuantity(),
+                    individualItem.getItemInfo().getPrice(),
+                    individualItem.getTotalPriceWithVAT().doubleValue()));
+            } else if (item instanceof ItemBundle) {
+                ItemBundle bundle = (ItemBundle)item;
+                receipt.append(String.format("%s (Bundle) %d x %.2f SEK\n",
+                    bundle.getName(),
+                    bundle.getQuantity(),
+                    bundle.getTotalPriceWithVAT().doubleValue()));
+                // Add bundle contents
+                for (SaleItem bundleItem : bundle.getItems()) {
+                    if (bundleItem instanceof Item) {
+                        Item individualItem = (Item)bundleItem;
+                        receipt.append(String.format("  - %s %.2f SEK\n",
+                            individualItem.getItemInfo().getName(),
+                            individualItem.getTotalPriceWithVAT().doubleValue()));
+                    }
+                }
+            }
         }
 
         receipt.append(String.format("\nTotal: %.2f SEK\n", sale.getRunningTotal()));

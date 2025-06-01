@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import se.kth.iv1350.POS.Integration.ItemInformation;
 import se.kth.iv1350.POS.Model.Item;
 import se.kth.iv1350.POS.Model.ItemBundle;
+import se.kth.iv1350.POS.Model.Sale;
 
 import java.math.BigDecimal;
 
@@ -86,5 +87,17 @@ class ItemBundleTest {
         assertThrows(IllegalArgumentException.class, 
             () -> bundle.addItem(null), 
             "Should throw on null item");
+    }
+
+    @Test
+    void testBundleInSale() {
+        Sale sale = new Sale();
+        bundle.addItem(item1);
+        bundle.addItem(item2);
+        sale.addBundle(bundle);
+        
+        assertEquals(1, sale.getItems().size(), "Sale should contain one bundle");
+        assertTrue(sale.getItems().get(0) instanceof ItemBundle, "Item should be a bundle");
+        assertEquals(30.0, sale.getRunningTotal(), 0.001, "Sale total should include bundle price");
     }
 } 

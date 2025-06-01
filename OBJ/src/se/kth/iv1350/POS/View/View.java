@@ -3,6 +3,8 @@ package se.kth.iv1350.POS.View;
 import se.kth.iv1350.POS.Controller.Controller;
 import se.kth.iv1350.POS.Integration.*;
 import se.kth.iv1350.POS.Model.Item;
+import se.kth.iv1350.POS.Model.ItemBundle;
+import se.kth.iv1350.POS.Model.SaleItem;
 
 /**
  * Simulates the user interface using hardcoded method calls.
@@ -42,6 +44,19 @@ public class View {
         // Add a different item
         registerAndDisplayItem("def456");
 
+        // Add a bundle of items
+        try {
+            controller.addBundle("Breakfast Bundle", 1, "abc123", "def456");
+            SaleItem lastItem = controller.getLastRegisteredItem();
+            if (lastItem != null && lastItem instanceof ItemBundle) {
+                displayBundleInfo((ItemBundle)lastItem);
+                displayRunningTotal();
+            }
+        } catch (ItemNotFoundException | DatabaseFailureException e) {
+            System.out.println("Error: " + e.getMessage());
+            logger.logException(e);
+        }
+
         // Try to add a non-existent item
         registerAndDisplayItem("invalid123");
 
@@ -57,9 +72,9 @@ public class View {
     private void registerAndDisplayItem(String itemId) {
         try {
             ItemInformation itemInfo = controller.registerItem(itemId);
-            Item lastItem = controller.getLastRegisteredItem();
-            if (lastItem != null) {
-                displayItemInfo(lastItem);
+            SaleItem lastItem = controller.getLastRegisteredItem();
+            if (lastItem != null && lastItem instanceof Item) {
+                displayItemInfo((Item)lastItem);
                 displayRunningTotal();
             }
         } catch (ItemNotFoundException | DatabaseFailureException e) {
@@ -90,7 +105,19 @@ public class View {
     }
 
     private void displayPayment() {
-        double change = controller.pay(100);
+        double change = controller.pay(200);
         System.out.printf("Change to give the customer: %.2f SEK\n", change);
+    }
+
+    private void displayBundleInfo(ItemBundle bundle) {
+        System.out.printf("Add bundle: %s (Quantity: %d)\n", bundle.getName(), bundle.getQuantity());
+        System.out.println("Bundle contents:");
+        for (SaleItem item : bundle.getItems()) {
+            if (item instanceof Item) {
+                ItemInformation itemInfo = ((Item)item).getItemInfo();
+                System.out.printf("- %s (%.2f SEK)\n", itemInfo.getName(), itemInfo.getPrice());
+            }
+        }
+        System.out.printf("Bundle total: %.2f SEK\n\n", bundle.getTotalPriceWithVAT().doubleValue());
     }
 }

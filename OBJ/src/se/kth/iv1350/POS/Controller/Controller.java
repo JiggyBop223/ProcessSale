@@ -72,12 +72,34 @@ public class Controller {
     }
 
     /**
+     * Creates a new item bundle and adds it to the sale.
+     *
+     * @param bundleName The name of the bundle.
+     * @param quantity The quantity of the bundle.
+     * @param itemIds The IDs of the items to include in the bundle.
+     * @throws ItemNotFoundException if any of the items are not found in the inventory.
+     * @throws DatabaseFailureException if the database cannot be accessed.
+     */
+    public void addBundle(String bundleName, int quantity, String... itemIds) 
+            throws ItemNotFoundException, DatabaseFailureException {
+        ItemBundle bundle = new ItemBundle(bundleName, quantity);
+        
+        for (String itemId : itemIds) {
+            ItemInformation itemInfo = this.inventorySystem.findItem(itemId);
+            Item item = new Item(itemInfo, 1);
+            bundle.addItem(item);
+        }
+        
+        this.currentSale.addBundle(bundle);
+    }
+
+    /**
      * Gets the last registered item's information.
      *
      * @return The last registered item, or null if no items have been registered.
      */
-    public Item getLastRegisteredItem() {
-        List<Item> items = this.currentSale.getItems();
+    public SaleItem getLastRegisteredItem() {
+        List<SaleItem> items = this.currentSale.getItems();
         return items.isEmpty() ? null : items.get(items.size() - 1);
     }
 
