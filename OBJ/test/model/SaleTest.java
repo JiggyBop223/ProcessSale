@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import se.kth.iv1350.POS.Model.Sale;
 import se.kth.iv1350.POS.Integration.ItemInformation;
 import se.kth.iv1350.POS.Model.Item;
+import se.kth.iv1350.POS.Model.SaleItem;
 
 import java.util.List;
 
@@ -17,11 +18,13 @@ class SaleTest {
         ItemInformation itemInfo = new ItemInformation("abc123", "Oatmeal", "Description", 10.0, 0.1);
 
         sale.registerItem(itemInfo);
-        List<Item> items = sale.getItems();
+        List<SaleItem> items = sale.getItems();
 
         assertEquals(1, items.size(), "Sale should contain one item after registration");
-        assertEquals("abc123", items.get(0).getItemInfo().getItemId(), "Item ID should match");
-        assertEquals(1, items.get(0).getQuantity(), "Quantity should be 1");
+        assertTrue(items.get(0) instanceof Item, "Item should be of type Item");
+        Item item = (Item)items.get(0);
+        assertEquals("abc123", item.getItemInfo().getItemId(), "Item ID should match");
+        assertEquals(1, item.getQuantity(), "Quantity should be 1");
     }
 
     @Test
@@ -31,14 +34,16 @@ class SaleTest {
 
         sale.registerItem(itemInfo);
         sale.registerItem(itemInfo);
-        List<Item> items = sale.getItems();
+        List<SaleItem> items = sale.getItems();
 
         assertEquals(1, items.size(), "Sale should not duplicate items with same ID");
-        assertEquals(2, items.get(0).getQuantity(), "Quantity should be increased to 2");
+        assertTrue(items.get(0) instanceof Item, "Item should be of type Item");
+        Item item = (Item)items.get(0);
+        assertEquals(2, item.getQuantity(), "Quantity should be increased to 2");
     }
 
     @Test
-    void getRunningTotal_shouldReturnCorrectTotalWithVAT() {
+    void getRunningTotal_shouldReturnCorrectTotal() {
         Sale sale = new Sale();
 
         ItemInformation itemInfo = new ItemInformation("xyz999", "Juice", "Fruit juice", 22.0, 0.1);
