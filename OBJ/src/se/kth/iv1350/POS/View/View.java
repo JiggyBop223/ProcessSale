@@ -5,6 +5,7 @@ import se.kth.iv1350.POS.Integration.*;
 import se.kth.iv1350.POS.Model.Item;
 import se.kth.iv1350.POS.Model.ItemBundle;
 import se.kth.iv1350.POS.Model.SaleItem;
+import java.util.List;
 
 /**
  * Simulates the user interface using hardcoded method calls.
@@ -47,9 +48,12 @@ public class View {
         // Add a bundle of items
         try {
             controller.addBundle("Breakfast Bundle", 1, "abc123", "def456");
-            SaleItem lastItem = controller.getLastRegisteredItem();
-            if (lastItem != null && lastItem instanceof ItemBundle) {
-                displayBundleInfo((ItemBundle)lastItem);
+            String bundleName = controller.getLastRegisteredBundleName();
+            int bundleQuantity = controller.getLastRegisteredBundleQuantity();
+            List<ItemDTO> bundleItems = controller.getLastRegisteredBundleItems();
+
+            if (bundleName != null && bundleItems != null) {
+                displayBundleInfo(bundleName, bundleQuantity, bundleItems);
                 displayRunningTotal();
             }
         } catch (ItemNotFoundException | DatabaseFailureException e) {
@@ -72,9 +76,9 @@ public class View {
     private void registerAndDisplayItem(String itemId) {
         try {
             ItemInformation itemInfo = controller.registerItem(itemId);
-            SaleItem lastItem = controller.getLastRegisteredItem();
-            if (lastItem != null && lastItem instanceof Item) {
-                displayItemInfo((Item)lastItem);
+            ItemDTO lastItem = controller.getLastRegisteredItem();
+            if (lastItem != null) {
+                displayItemInfo(lastItem);
                 displayRunningTotal();
             }
         } catch (ItemNotFoundException | DatabaseFailureException e) {
@@ -83,15 +87,14 @@ public class View {
         }
     }
 
-    private void displayItemInfo(Item item) {
-        ItemInformation itemInfo = item.getItemInfo();
-        System.out.printf("Add 1 item with item id %s :\n", itemInfo.getItemId());
+    private void displayItemInfo(ItemDTO item) {
+        System.out.printf("Add 1 item with item id %s :\n", item.getItemId());
         System.out.printf("Item ID: %s\nItem name: %s\nItem cost: %.2f SEK\nVAT: %.0f%%\nItem description: %s\n\n",
-            itemInfo.getItemId(),
-            itemInfo.getName(),
-            itemInfo.getPrice(),
-            itemInfo.getVatRate() * 100.0,
-            itemInfo.getDescription());
+                item.getItemId(),
+                item.getName(),
+                item.getPrice(),
+                item.getVatRate() * 100.0,
+                item.getDescription());
     }
 
     private void displayRunningTotal() {
@@ -109,15 +112,12 @@ public class View {
         System.out.printf("Change to give the customer: %.2f SEK\n", change);
     }
 
-    private void displayBundleInfo(ItemBundle bundle) {
-        System.out.printf("Add bundle: %s (Quantity: %d)\n", bundle.getName(), bundle.getQuantity());
+    private void displayBundleInfo(String bundleName, int quantity, List<ItemDTO> items) {
+        System.out.printf("Add bundle: %s (Quantity: %d)\n", bundleName, quantity);
         System.out.println("Bundle contents:");
-        for (SaleItem item : bundle.getItems()) {
-            if (item instanceof Item) {
-                ItemInformation itemInfo = ((Item)item).getItemInfo();
-                System.out.printf("- %s (%.2f SEK)\n", itemInfo.getName(), itemInfo.getPrice());
-            }
+        for (ItemDTO item : items) {
+            System.out.printf("- %s (%.2f SEK)\n", item.getName(), item.getPrice());
         }
-        System.out.printf("Bundle total: %.2f SEK\n\n", bundle.getTotalPriceWithVAT().doubleValue());
+        System.out.printf("Bundle total: %.2f SEK\n\n", controller.getRunningTotal());
     }
 }

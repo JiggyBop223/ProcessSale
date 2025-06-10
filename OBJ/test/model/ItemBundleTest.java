@@ -37,8 +37,8 @@ class ItemBundleTest {
         bundle.addItem(item1);
         bundle.addItem(item2);
         BigDecimal expected = BigDecimal.valueOf(30.0); // 10.0 + 20.0
-        assertEquals(0, expected.compareTo(bundle.getTotalPrice()), 
-            "Total price should be sum of item prices");
+        assertEquals(0, expected.compareTo(bundle.getTotalPrice()),
+                "Total price should be sum of item prices");
     }
 
     @Test
@@ -46,8 +46,8 @@ class ItemBundleTest {
         bundle.addItem(item1);
         bundle.addItem(item2);
         BigDecimal expectedVAT = BigDecimal.valueOf(2.73); // (30 * 0.1) / 1.1
-        assertEquals(0, expectedVAT.compareTo(bundle.getTotalVAT()), 
-            "Total VAT should be correct");
+        assertEquals(0, expectedVAT.compareTo(bundle.getTotalVAT()),
+                "Total VAT should be correct");
     }
 
     @Test
@@ -63,30 +63,30 @@ class ItemBundleTest {
 
     @Test
     void testConstructorThrowsExceptionOnNullName() {
-        assertThrows(IllegalArgumentException.class, 
-            () -> new ItemBundle(null, 1), 
-            "Should throw on null bundle name");
+        assertThrows(IllegalArgumentException.class,
+                () -> new ItemBundle(null, 1),
+                "Should throw on null bundle name");
     }
 
     @Test
     void testConstructorThrowsExceptionOnEmptyName() {
-        assertThrows(IllegalArgumentException.class, 
-            () -> new ItemBundle("", 1), 
-            "Should throw on empty bundle name");
+        assertThrows(IllegalArgumentException.class,
+                () -> new ItemBundle("", 1),
+                "Should throw on empty bundle name");
     }
 
     @Test
     void testConstructorThrowsExceptionOnNegativeQuantity() {
-        assertThrows(IllegalArgumentException.class, 
-            () -> new ItemBundle("Test", -1), 
-            "Should throw on negative quantity");
+        assertThrows(IllegalArgumentException.class,
+                () -> new ItemBundle("Test", -1),
+                "Should throw on negative quantity");
     }
 
     @Test
     void testAddItemThrowsExceptionOnNullItem() {
-        assertThrows(IllegalArgumentException.class, 
-            () -> bundle.addItem(null), 
-            "Should throw on null item");
+        assertThrows(IllegalArgumentException.class,
+                () -> bundle.addItem(null),
+                "Should throw on null item");
     }
 
     @Test
@@ -95,7 +95,7 @@ class ItemBundleTest {
         bundle.addItem(item1);
         bundle.addItem(item2);
         sale.addBundle(bundle);
-        
+
         assertEquals(1, sale.getItems().size(), "Sale should contain one bundle");
         assertTrue(sale.getItems().get(0) instanceof ItemBundle, "Item should be a bundle");
         assertEquals(30.0, sale.getRunningTotal(), 0.001, "Sale total should include bundle price");

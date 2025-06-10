@@ -40,13 +40,13 @@ public class ViewTest {
 
     @Test
     void testViewHandlesNonExistentItem() {
-        assertDoesNotThrow(() -> view.sampleExecution(), 
-            "View should handle ItemNotFoundException without throwing");
+        assertDoesNotThrow(() -> view.sampleExecution(),
+                "View should handle ItemNotFoundException without throwing");
     }
 
     @Test
     void testViewHandlesDatabaseFailure() {
-        assertDoesNotThrow(() -> view.sampleExecution(), 
-            "View should handle DatabaseFailureException without throwing");
+        assertDoesNotThrow(() -> view.sampleExecution(),
+                "View should handle DatabaseFailureException without throwing");
     }
 } 

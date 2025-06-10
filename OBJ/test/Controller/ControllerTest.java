@@ -71,7 +71,7 @@ class ControllerTest {
         controller.startSale();
         controller.registerItem("abc123");
         double change = controller.pay(100);
-        
+
         assertEquals(70.10, change, 0.001, "Change should be correct");
         assertNotNull(mockPrinter.getLastPrintedText(), "Receipt should be printed");
         assertTrue(mockPrinter.getLastPrintedText().contains("BigWheel Oatmeal"), "Receipt should contain item name");

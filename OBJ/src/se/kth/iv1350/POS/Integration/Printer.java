@@ -10,7 +10,7 @@ public class Printer {
      * @param receiptText The text to print.
      */
     public void printReceipt(String receiptText) {
-    
+
         System.out.println(receiptText);
     }
 }

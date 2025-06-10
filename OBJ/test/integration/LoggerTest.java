@@ -35,7 +35,7 @@ public class LoggerTest {
     void testLogItemNotFoundException() {
         ItemNotFoundException exception = new ItemNotFoundException("test123");
         logger.logException(exception);
-        
+
         assertTrue(new File(LOG_FILE_NAME).exists(), "Log file should be created");
         String logContent = readLogFile();
         assertTrue(logContent.contains("ItemNotFoundException"), "Log should contain exception type");

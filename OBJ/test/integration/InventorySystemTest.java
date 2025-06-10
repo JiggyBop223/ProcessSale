@@ -16,6 +16,11 @@ public class InventorySystemTest {
     private InventorySystem inventorySystem;
     private static final String NON_EXISTENT_ITEM_ID = "nonExistentItem";
     private static final String DATABASE_FAILURE_ITEM_ID = "999999";
+    private static final String VALID_ITEM_ID = "abc123";
+    private static final String EXPECTED_ITEM_NAME = "BigWheel Oatmeal";
+    private static final double EXPECTED_ITEM_PRICE = 29.90;
+    private static final double EXPECTED_VAT_RATE = 0.06;
+    private static final String EXPECTED_ITEM_DESCRIPTION = "BigWheel Oatmeal 500g, whole grain oats, high fiber";
 
     @BeforeEach
     void setUp() {
@@ -28,8 +33,8 @@ public class InventorySystemTest {
             inventorySystem.findItem(NON_EXISTENT_ITEM_ID);
             fail("Expected ItemNotFoundException was not thrown");
         } catch (ItemNotFoundException e) {
-            assertTrue(e.getMessage().contains(NON_EXISTENT_ITEM_ID), 
-                "Exception message should contain the item ID");
+            assertTrue(e.getMessage().contains(NON_EXISTENT_ITEM_ID),
+                    "Exception message should contain the item ID");
         } catch (DatabaseFailureException e) {
             fail("Unexpected DatabaseFailureException was thrown");
         }
@@ -41,8 +46,8 @@ public class InventorySystemTest {
             inventorySystem.findItem(DATABASE_FAILURE_ITEM_ID);
             fail("Expected DatabaseFailureException was not thrown");
         } catch (DatabaseFailureException e) {
-            assertTrue(e.getMessage().contains(DATABASE_FAILURE_ITEM_ID), 
-                "Exception message should contain the item ID");
+            assertTrue(e.getMessage().contains(DATABASE_FAILURE_ITEM_ID),
+                    "Exception message should contain the item ID");
         } catch (ItemNotFoundException e) {
             fail("Unexpected ItemNotFoundException was thrown");
         }
